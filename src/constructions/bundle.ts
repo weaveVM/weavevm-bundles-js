@@ -2,47 +2,7 @@ import * as zlib from "zlib"
 import * as borsh from "@project-serum/borsh"
 import { Envelope } from "./envelope"
 import * as constants from "../constants"
-
-export interface SignatureData {
-  r: string
-  s: string
-  v?: number
-  yParity?: number
-}
-
-export interface SignedBundleTransaction {
-  signature: SignatureData
-  hash: string
-}
-
-export interface BundleTransaction {
-  to: string
-  data: string
-  signature?: SignatureData
-  hash?: string
-}
-
-const EnvelopeSignatureLayout = borsh.struct([
-  borsh.bool("y_parity"),
-  borsh.str("r"),
-  borsh.str("s"),
-])
-
-const TxEnvelopeWrapperLayout = borsh.struct([
-  borsh.u64("chain_id"),
-  borsh.u64("nonce"),
-  borsh.u128("gas_price"),
-  borsh.u64("gas_limit"),
-  borsh.str("to"),
-  borsh.str("value"),
-  borsh.str("input"),
-  borsh.str("hash"),
-  EnvelopeSignatureLayout.replicate("signature"),
-])
-
-const BundleData = borsh.struct([
-  borsh.vec(TxEnvelopeWrapperLayout, "envelopes"),
-])
+import { SignatureData, BundleData, SignedBundleTransaction, BundleTransaction } from "../structs"
 
 export class Bundle {
   to: string = constants.ADDRESS_BABE1

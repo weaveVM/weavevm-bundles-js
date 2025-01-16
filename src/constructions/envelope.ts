@@ -1,6 +1,6 @@
 import * as constants from "../constants"
 import { ethers, SignatureLike, Signature } from "ethers"
-import { SignatureData } from "./bundle"
+import { SignatureData, Tag } from "../structs"
 
 export interface SignedEnvelopeTransaction {
   signature: SignatureData
@@ -14,14 +14,16 @@ export class Envelope {
   gasLimit: number | string = 0
   value: string = "0"
   type: number = 0
-  dataField: Uint8Array = new Uint8Array()
-  toField: string = "0x0000000000000000000000000000000000000000"
+  data: Uint8Array = new Uint8Array()
+  to: string = "0x0000000000000000000000000000000000000000"
   signature?: Signature
   hash?: string
+  tagsSizeLimit: number = 2048;
+  tags: Map<string, string>=new Map();
 
   constructor(data: Uint8Array = new Uint8Array(), to: string = "0x0000000000000000000000000000000000000000") {
-    this.dataField = data
-    this.toField = to
+    this.data = data
+    this.to = to
   }
 
   get sender() {
@@ -42,18 +44,18 @@ export class Envelope {
       gasLimit: "0",
       value: "0",
       type: 0,
-      to: this.toField,
-      data: "0x" + Buffer.from(this.dataField).toString("hex"),
+      to: this.to,
+      data: "0x" + Buffer.from(this.data).toString("hex"),
     }
   }
 
   withData(data: Uint8Array): this {
-    this.dataField = data
+    this.data = data
     return this
   }
 
   withTo(to: string): this {
-    this.toField = to
+    this.to = to
     return this
   }
 
@@ -65,8 +67,8 @@ export class Envelope {
       gasLimit: 0,
       value: 0,
       type: 0,
-      to: this.toField,
-      input: "0x" + Buffer.from(this.dataField).toString("hex"),
+      to: this.to,
+      input: "0x" + Buffer.from(this.data).toString("hex"),
       hash: this.hash,
       signature: {
         y_parity: this.signature
@@ -77,11 +79,17 @@ export class Envelope {
         r: this.signature ? this.signature?.r : "",
         s: this.signature ? this.signature?.s : "",
       },
+      ...(this.tags.size&&({
+        tags: [...this.tags.entries()].map((tag)=>({
+          name:tag[0],
+          value:tag[1]
+        }))
+      }))// Only exports tags field if there's non-0 amount of tags
     }
   }
 
   fromBundledEnvelope(bundledEnvelope: any): this {
-    this.dataField = new Uint8Array(Buffer.from(bundledEnvelope.input.slice(2), "hex"))
+    this.data = new Uint8Array(Buffer.from(bundledEnvelope.input.slice(2), "hex"))
     this.nonce = bundledEnvelope.nonce.toString(10)
     this.chain_id = Number(bundledEnvelope.chain_id.toString(10))
     this.signature = Signature.from({
@@ -93,8 +101,9 @@ export class Envelope {
     this.hash = bundledEnvelope.hash
     this.gasPrice = bundledEnvelope.gas_price.toString(10)
     this.gasLimit = bundledEnvelope.gas_limit.toString(10)
-    this.toField = bundledEnvelope.to
+    this.to = bundledEnvelope.to
     this.value = bundledEnvelope.value
+    this.tags=new Map((bundledEnvelope.tags||[]).map((tag:Tag)=>([tag.name,tag.value])))
     return this
   }
 
