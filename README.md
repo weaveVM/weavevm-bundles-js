@@ -119,7 +119,7 @@ import { Envelope } from "weavevm-bundles";
     signature: signedTx.signature,
     hash: signedTx.hash,
   });
-  //Now Envelope should be valid and can be added to bundle
+  // Now Envelope should be valid and can be added to bundle
 
 
 })();
