@@ -65,7 +65,7 @@ class Envelope {
     extractUnsigned() {
         return {
             chainId: this.chain_id,
-            nonce: "0",
+            nonce: 0,
             gasPrice: "0",
             gasLimit: "0",
             value: "0",
@@ -73,6 +73,20 @@ class Envelope {
             to: this.to,
             data: "0x" + Buffer.from(this.data).toString("hex"),
         };
+    }
+    extractSigned() {
+        return ethers_1.ethers.Transaction.from({
+            chainId: this.chain_id,
+            nonce: 0,
+            gasPrice: "0",
+            gasLimit: "0",
+            value: "0",
+            type: 0,
+            to: this.to,
+            data: "0x" + Buffer.from(this.data).toString("hex"),
+            signature: this.signature,
+            hash: this.hash
+        });
     }
     withData(data) {
         this.data = data;
@@ -112,7 +126,7 @@ class Envelope {
     }
     fromBundledEnvelope(bundledEnvelope) {
         this.data = new Uint8Array(Buffer.from(bundledEnvelope.input.slice(2), "hex"));
-        this.nonce = bundledEnvelope.nonce.toString(10);
+        this.nonce = parseInt(bundledEnvelope.nonce.toString(10));
         this.chain_id = Number(bundledEnvelope.chain_id.toString(10));
         this.signature = ethers_1.Signature.from({
             yParity: bundledEnvelope.signature.y_parity ? 1 : 0,
@@ -134,7 +148,7 @@ class Envelope {
         catch {
             return false;
         }
-        if (this.nonce !== 0 && this.nonce !== "0")
+        if (this.nonce !== 0)
             return false;
         return true;
     }

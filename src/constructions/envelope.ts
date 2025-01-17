@@ -9,7 +9,7 @@ export interface SignedEnvelopeTransaction {
 
 export class Envelope {
   chain_id: number = constants.CHAIN_ID
-  nonce: number | string = 0
+  nonce: number = 0
   gasPrice: string = "0"
   gasLimit: number | string = 0
   value: string = "0"
@@ -39,7 +39,7 @@ export class Envelope {
   extractUnsigned() {
     return {
       chainId: this.chain_id,
-      nonce: "0",
+      nonce: 0,
       gasPrice: "0",
       gasLimit: "0",
       value: "0",
@@ -47,6 +47,20 @@ export class Envelope {
       to: this.to,
       data: "0x" + Buffer.from(this.data).toString("hex"),
     }
+  }
+  extractSigned() {
+    return ethers.Transaction.from({
+      chainId: this.chain_id,
+      nonce: 0,
+      gasPrice: "0",
+      gasLimit: "0",
+      value: "0",
+      type: 0,
+      to: this.to,
+      data: "0x" + Buffer.from(this.data).toString("hex"),
+      signature:this.signature,
+      hash:this.hash
+    })
   }
 
   withData(data: Uint8Array): this {
@@ -90,7 +104,7 @@ export class Envelope {
 
   fromBundledEnvelope(bundledEnvelope: any): this {
     this.data = new Uint8Array(Buffer.from(bundledEnvelope.input.slice(2), "hex"))
-    this.nonce = bundledEnvelope.nonce.toString(10)
+    this.nonce = parseInt(bundledEnvelope.nonce.toString(10))
     this.chain_id = Number(bundledEnvelope.chain_id.toString(10))
     this.signature = Signature.from({
       yParity: bundledEnvelope.signature.y_parity ? 1 : 0,
@@ -113,7 +127,7 @@ export class Envelope {
     } catch {
       return false
     }
-    if (this.nonce !== 0 && this.nonce !== "0") return false
+    if (this.nonce !== 0) return false
     return true
   }
 }

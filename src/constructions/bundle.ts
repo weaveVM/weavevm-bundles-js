@@ -74,7 +74,7 @@ export class Bundle {
       chain_id: this.chain_id,
       ...(this.hash && { hash: this.hash }),
       ...(this.signature && { signature: this.signature }),
-      data: this.compressAndBorshCalldata(),
+      data:'0x'+this.compressAndBorshCalldata().toString('hex'),
     }
   }
 }
