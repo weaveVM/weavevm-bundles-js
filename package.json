@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/weavevm/bundles-js.git"
+    "url": "git+https://github.com/weavevm/weavevm-bundles-js.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/weavevm/bundles-js/issues"
   },
-  "homepage": "https://github.com/weavevm/bundles-js#readme",
+  "homepage": "https://github.com/weavevm/weavevm-bundles-js#readme",
   "dependencies": {
     "@project-serum/borsh": "^0.2.5",
     "bn.js": "^5.2.1"
