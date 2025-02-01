@@ -1,21 +1,22 @@
 {
   "name": "weavevm-bundles",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "JS/TS library for creating/manipulating/posting bundles on weavevm",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "types":"src/index.ts",
   "scripts": {
     "test": "mocha"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/weavevm/weavevm-bundles-js.git"
+    "url": "git+https://github.com/weavevm/bundles-js.git"
   },
   "author": "",
-  "license": "MIT",
+  "license": "ISC",
   "bugs": {
-    "url": "https://github.com/weavevm/weavevm-bundles-js/issues"
+    "url": "https://github.com/weavevm/bundles-js/issues"
   },
-  "homepage": "https://github.com/weavevm/weavevm-bundles-js#readme",
+  "homepage": "https://github.com/weavevm/bundles-js#readme",
   "dependencies": {
     "@project-serum/borsh": "^0.2.5",
     "bn.js": "^5.2.1"
